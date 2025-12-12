@@ -13,8 +13,8 @@
         }
     },
     "scripts": {
-        "build": "tsup src/index.ts --format cjs,esm --dts",
-        "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+        "build": "npx tsup src/index.ts --format cjs,esm --dts",
+        "dev": "npx tsup src/index.ts --format cjs,esm --dts --watch",
         "test": "jest --coverage",
         "test:watch": "jest --watch",
         "lint": "eslint src/",
