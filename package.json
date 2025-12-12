@@ -6,7 +6,7 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "build:calc": "cd packages/calc && npm install && npm run build",
-    "build:web": "npm run build:calc && cd apps/web && npm install && npm run build",
+    "build:web": "cd apps/web && npm install --legacy-peer-deps && npm run build",
     "start:web": "cd apps/web && npm start",
     "test": "turbo run test",
     "lint": "turbo run lint",
