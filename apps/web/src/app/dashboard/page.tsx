@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
     TrendingUp, PieChart, Target, Bell, Settings, LogOut, Plus,
-    BarChart3, Wallet, ArrowUpRight, ArrowDownRight, Calendar, Sparkles
+    BarChart3, Wallet, ArrowUpRight, ArrowDownRight, Calendar, Sparkles, Newspaper
 } from 'lucide-react';
 import { supabase, getCurrentUser, signOut } from '@/lib/supabase';
 import MarketTicker from '@/components/MarketTicker';
@@ -123,6 +123,8 @@ export default function DashboardPage() {
                     {[
                         { icon: BarChart3, label: 'Dashboard', href: '/dashboard', active: true },
                         { icon: PieChart, label: 'Strategies', href: '/dashboard/strategies' },
+                        { icon: TrendingUp, label: 'Stocks', href: '/dashboard/stocks' },
+                        { icon: Newspaper, label: 'News', href: '/dashboard/news' },
                         { icon: Target, label: 'FIRE Tracker', href: '/dashboard/fire' },
                         { icon: Wallet, label: 'Portfolio', href: '/dashboard/portfolio' },
                         { icon: Sparkles, label: 'AI Insights', href: '/dashboard/insights' },

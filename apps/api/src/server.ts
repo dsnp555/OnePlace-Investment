@@ -19,6 +19,8 @@ import { marketRoutes } from './routes/market.js';
 import { exportRoutes } from './routes/export.js';
 import { notificationRoutes } from './routes/notifications.js';
 import { recommendationRoutes } from './routes/recommendations.js';
+import { stockRoutes } from './routes/stocks.js';
+import { newsRoutes } from './routes/news.js';
 
 // Load environment variables
 dotenv.config({ path: '../../.env' });
@@ -105,6 +107,8 @@ async function registerRoutes() {
     await server.register(exportRoutes, { prefix: '/api/export' });
     await server.register(notificationRoutes, { prefix: '/api/notifications' });
     await server.register(recommendationRoutes, { prefix: '/api/recommendations' });
+    await server.register(stockRoutes, { prefix: '/api/stocks' });
+    await server.register(newsRoutes, { prefix: '/api/news' });
 }
 
 // Global error handler
