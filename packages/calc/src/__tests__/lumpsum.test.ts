@@ -24,9 +24,9 @@ describe('getCompoundingPeriods', () => {
 describe('calculateLumpsumFV', () => {
     it('should calculate correct FV for standard case', () => {
         // ₹25,000 at 12% for 10 years, monthly compounding
-        // FV = 25000 × (1 + 0.12/12)^(12×10) = 25000 × (1.01)^120 = 82,846.24
+        // FV = 25000 × (1 + 0.12/12)^(12×10) = 25000 × (1.01)^120 ≈ 82,509.67
         const fv = calculateLumpsumFV(25000, 0.12, 10, 'monthly');
-        expect(fv).toBeCloseTo(82846.24, 0);
+        expect(fv).toBeCloseTo(82509.67, 0);
     });
 
     it('should handle annual compounding', () => {
@@ -84,13 +84,14 @@ describe('calculateLumpsumFVReal', () => {
         // Real FV should be less than nominal FV
         expect(realFV).toBeLessThan(nominalFV);
 
-        // Approximately: 82846 / (1.05)^10 = 50,862
-        expect(realFV).toBeCloseTo(50862, -2);
+        // Real FV ≈ 82509.67 / (1.05)^10 ≈ 50,653.78
+        expect(realFV).toBeCloseTo(50653.78, 0);
     });
 
     it('should equal nominal FV when inflation is 0', () => {
         const nominalFV = calculateLumpsumFV(25000, 0.12, 10, 'monthly');
         const realFV = calculateLumpsumFVReal(25000, 0.12, 10, 0, 'monthly');
-        expect(realFV).toBe(nominalFV);
+        // Use toBeCloseTo for floating point comparison
+        expect(realFV).toBeCloseTo(nominalFV, 2);
     });
 });

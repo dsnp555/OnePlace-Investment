@@ -55,3 +55,19 @@ export {
     calculateFIRENumber,
     estimateYearsToFIRE,
 } from './risk';
+
+// Monte Carlo simulation
+export {
+    runMonteCarloSimulation,
+    getDefaultVolatility,
+    calculatePortfolioVolatility,
+    DEFAULT_VOLATILITY,
+} from './monteCarlo';
+
+export type {
+    MonteCarloParams,
+    MonteCarloResult,
+    SimulationResult,
+    ConfidenceInterval,
+} from './monteCarlo';
+

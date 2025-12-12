@@ -7,6 +7,7 @@ import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, Legend
 } from 'recharts';
+import MonteCarloChart from './MonteCarloChart';
 
 interface ProjectionResultsProps {
     projection: PortfolioProjection;
@@ -14,6 +15,7 @@ interface ProjectionResultsProps {
     amount: number;
     duration: number;
     inflationRate: number;
+    allocations?: { category: string; percent: number; expectedReturn: number }[];
 }
 
 const COLORS = [
@@ -33,6 +35,7 @@ export default function ProjectionResults({
     amount,
     duration,
     inflationRate,
+    allocations,
 }: ProjectionResultsProps) {
     const { aggregate, normalizedAllocations, yearlyBreakdown } = projection;
 
@@ -318,6 +321,18 @@ export default function ProjectionResults({
                     ))}
                 </div>
             </div>
+
+            {/* Monte Carlo Simulation */}
+            {allocations && allocations.length > 0 && (mode === 'lumpsum' || mode === 'sip') && (
+                <MonteCarloChart
+                    mode={mode}
+                    amount={amount}
+                    durationYears={duration}
+                    expectedReturn={aggregate.cagr}
+                    allocations={allocations}
+                    inflationRate={inflationRate / 100}
+                />
+            )}
         </div>
     );
 }

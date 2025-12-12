@@ -216,10 +216,10 @@ export default function NewStrategyPage() {
                                     onClick={() => s.num < step && setStep(s.num)}
                                     disabled={s.num > step}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors ${step === s.num
-                                            ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400'
-                                            : step > s.num
-                                                ? 'text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20'
-                                                : 'text-slate-400 cursor-not-allowed'
+                                        ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400'
+                                        : step > s.num
+                                            ? 'text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20'
+                                            : 'text-slate-400 cursor-not-allowed'
                                         }`}
                                 >
                                     <s.icon className="w-4 h-4" />
@@ -276,8 +276,8 @@ export default function NewStrategyPage() {
                                             key={m.id}
                                             onClick={() => setMode(m.id as InvestmentMode)}
                                             className={`p-4 rounded-xl border-2 text-left transition-all ${mode === m.id
-                                                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                                                    : 'border-slate-200 dark:border-slate-700 hover:border-primary-200'
+                                                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                                                : 'border-slate-200 dark:border-slate-700 hover:border-primary-200'
                                                 }`}
                                         >
                                             <div className="font-medium text-slate-900 dark:text-white">{m.label}</div>
@@ -292,13 +292,15 @@ export default function NewStrategyPage() {
                                     {mode === 'sip' ? 'Monthly Amount' : 'Investment Amount'}
                                 </label>
                                 <div className="relative">
-                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">₹</span>
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none font-medium">₹</span>
                                     <input
                                         type="number"
                                         value={amount}
                                         onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
-                                        className="input pl-8"
+                                        className="input"
+                                        style={{ paddingLeft: '3rem' }}
                                         min="0"
+                                        placeholder="0"
                                     />
                                 </div>
                             </div>
@@ -381,6 +383,11 @@ export default function NewStrategyPage() {
                         amount={amount}
                         duration={duration}
                         inflationRate={inflationRate}
+                        allocations={allocations.map(a => ({
+                            category: a.category,
+                            percent: a.percent,
+                            expectedReturn: a.expectedReturn,
+                        }))}
                     />
                 )}
             </main>
