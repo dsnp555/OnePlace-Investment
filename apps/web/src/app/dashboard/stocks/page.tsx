@@ -132,6 +132,67 @@ export default function StocksPage() {
         setRefreshing(false);
     };
 
+    // Fetch real stock quote from API
+    const fetchStockQuote = async (symbol: string, name: string, exchange: 'NSE' | 'BSE' = 'NSE'): Promise<StockQuote> => {
+        try {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+            const response = await fetch(`${apiUrl}/api/stocks/quote/${symbol}?exchange=${exchange}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                return data;
+            }
+        } catch (error) {
+            console.error('Error fetching stock quote:', error);
+        }
+
+        // Return demo data with realistic values if API fails
+        const demoStock = DEMO_STOCKS.find(s => s.symbol === symbol);
+        if (demoStock) return demoStock;
+
+        // Generate random demo data
+        const basePrice = 500 + Math.random() * 2000;
+        const change = (Math.random() - 0.5) * 50;
+        return {
+            symbol,
+            name,
+            exchange,
+            price: Math.round(basePrice * 100) / 100,
+            change: Math.round(change * 100) / 100,
+            changePercent: Math.round((change / basePrice) * 10000) / 100,
+            open: Math.round((basePrice - Math.random() * 20) * 100) / 100,
+            high: Math.round((basePrice + Math.random() * 30) * 100) / 100,
+            low: Math.round((basePrice - Math.random() * 30) * 100) / 100,
+            previousClose: Math.round((basePrice - change) * 100) / 100,
+            volume: Math.floor(Math.random() * 10000000),
+            lastUpdated: new Date().toISOString(),
+        };
+    };
+
+    const handleStockClick = async (symbol: string, name: string, exchange: 'NSE' | 'BSE' = 'NSE') => {
+        setSearchQuery('');
+        setSearchResults([]);
+
+        // Check if stock already in list with real data
+        const existingStock = stocks.find(s => s.symbol === symbol && s.price > 0);
+        if (existingStock) {
+            setSelectedStock(existingStock);
+            return;
+        }
+
+        // Fetch real data
+        setLoading(true);
+        const stockData = await fetchStockQuote(symbol, name, exchange);
+        setLoading(false);
+
+        // Add to stocks list if not present
+        if (!stocks.find(s => s.symbol === symbol)) {
+            setStocks(prev => [stockData, ...prev]);
+        }
+
+        setSelectedStock(stockData);
+    };
+
     const handleSearch = useCallback((query: string) => {
         setSearchQuery(query);
 
@@ -238,12 +299,7 @@ export default function StocksPage() {
                                 {searchResults.map((result) => (
                                     <button
                                         key={result.symbol}
-                                        onClick={() => {
-                                            setSearchQuery('');
-                                            setSearchResults([]);
-                                            const stock = stocks.find(s => s.symbol === result.symbol);
-                                            if (stock) setSelectedStock(stock);
-                                        }}
+                                        onClick={() => handleStockClick(result.symbol, result.name, result.exchange)}
                                         className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-b-0"
                                     >
                                         <div className="text-left">
