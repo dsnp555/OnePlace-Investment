@@ -8,9 +8,8 @@ services:
     runtime: node
     region: oregon
     plan: free
-    rootDir: apps/web
-    buildCommand: cd ../.. && pnpm install && pnpm turbo run build --filter=web
-    startCommand: cd ../.. && pnpm turbo run start --filter=web
+    buildCommand: npm install --legacy-peer-deps && npm run build:web
+    startCommand: npm run start:web
     envVars:
       - key: NODE_ENV
         value: production
@@ -22,24 +21,3 @@ services:
         sync: false
     healthCheckPath: /
     autoDeploy: true
-
-  # Fastify API Server (optional - uncomment if needed)
-  # - type: web
-  #   name: oneplace-api
-  #   runtime: node
-  #   region: oregon
-  #   plan: free
-  #   rootDir: apps/api
-  #   buildCommand: cd ../.. && pnpm install && pnpm turbo run build --filter=api
-  #   startCommand: node dist/server.js
-  #   envVars:
-  #     - key: NODE_ENV
-  #       value: production
-  #     - key: SUPABASE_URL
-  #       sync: false
-  #     - key: SUPABASE_SERVICE_KEY
-  #       sync: false
-  #     - key: ALPHA_VANTAGE_API_KEY
-  #       sync: false
-  #   healthCheckPath: /health
-  #   autoDeploy: true
