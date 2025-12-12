@@ -1,0 +1,33 @@
+{
+    "name": "@oneplace/api",
+    "version": "1.0.0",
+    "private": true,
+    "main": "dist/server.js",
+    "scripts": {
+        "dev": "tsx watch src/server.ts",
+        "build": "tsc",
+        "start": "node dist/server.js",
+        "test": "jest",
+        "lint": "eslint src/",
+        "clean": "rm -rf dist"
+    },
+    "dependencies": {
+        "@fastify/cors": "^8.5.0",
+        "@fastify/helmet": "^11.1.1",
+        "@fastify/rate-limit": "^9.1.0",
+        "@fastify/swagger": "^8.12.0",
+        "@fastify/swagger-ui": "^2.0.1",
+        "@oneplace/calc": "workspace:*",
+        "@supabase/supabase-js": "^2.39.0",
+        "dotenv": "^16.3.1",
+        "fastify": "^4.25.0",
+        "jspdf": "^2.5.1",
+        "jspdf-autotable": "^3.8.1",
+        "zod": "^3.22.4"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.0",
+        "tsx": "^4.6.2",
+        "typescript": "^5.3.3"
+    }
+}
