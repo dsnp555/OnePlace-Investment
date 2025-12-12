@@ -8,12 +8,18 @@ import {
     BarChart3, Wallet, ArrowUpRight, ArrowDownRight, Calendar
 } from 'lucide-react';
 import { supabase, getCurrentUser, signOut } from '@/lib/supabase';
+import MarketTicker from '@/components/MarketTicker';
 
 export default function DashboardPage() {
     const router = useRouter();
     const [user, setUser] = useState<any>(null);
     const [strategies, setStrategies] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+
+    // Calculated stats
+    const [totalInvested, setTotalInvested] = useState(0);
+    const [projectedValue, setProjectedValue] = useState(0);
+    const [fireProgress, setFireProgress] = useState(0);
 
     useEffect(() => {
         const loadData = async () => {
@@ -33,6 +39,56 @@ export default function DashboardPage() {
                 .limit(5);
 
             setStrategies(strategiesData || []);
+
+            // Calculate totals from strategies
+            if (strategiesData && strategiesData.length > 0) {
+                let investedSum = 0;
+                let projectedSum = 0;
+
+                strategiesData.forEach((strategy: any) => {
+                    // Calculate invested amount based on mode and duration
+                    const amount = strategy.amount || 0;
+                    const duration = strategy.duration_years || 0;
+                    const mode = strategy.mode || 'lumpsum';
+
+                    if (mode === 'sip') {
+                        investedSum += amount * 12 * duration; // Monthly SIP * 12 months * years
+                    } else {
+                        investedSum += amount; // Lumpsum one-time
+                    }
+
+                    // Use projected_value if available, otherwise estimate
+                    if (strategy.projected_value) {
+                        projectedSum += strategy.projected_value;
+                    } else {
+                        // Rough estimate: 12% annual return compounded
+                        const rate = 0.12;
+                        if (mode === 'sip') {
+                            // SIP FV formula approximation
+                            projectedSum += amount * 12 * ((Math.pow(1 + rate, duration) - 1) / rate);
+                        } else {
+                            // Lumpsum FV
+                            projectedSum += amount * Math.pow(1 + rate, duration);
+                        }
+                    }
+                });
+
+                setTotalInvested(Math.round(investedSum));
+                setProjectedValue(Math.round(projectedSum));
+            }
+
+            // Fetch FIRE goal for progress calculation
+            const { data: fireData } = await supabase
+                .from('fire_goals')
+                .select('*')
+                .eq('user_id', user.id)
+                .single();
+
+            if (fireData && fireData.fire_number && fireData.current_savings) {
+                const progress = Math.min(100, Math.round((fireData.current_savings / fireData.fire_number) * 100));
+                setFireProgress(progress);
+            }
+
             setLoading(false);
         };
 
@@ -76,8 +132,8 @@ export default function DashboardPage() {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${item.active
-                                    ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
-                                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
+                                ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
                                 }`}
                         >
                             <item.icon className="w-5 h-5" />
@@ -115,25 +171,54 @@ export default function DashboardPage() {
                     </Link>
                 </div>
 
+                {/* Market Ticker */}
+                <div className="mb-8">
+                    <MarketTicker apiUrl={process.env.NEXT_PUBLIC_API_URL} />
+                </div>
+
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     {[
-                        { label: 'Total Invested', value: '₹12,50,000', change: '+8.5%', positive: true, icon: Wallet },
-                        { label: 'Projected Value', value: '₹24,56,789', change: '+12.3%', positive: true, icon: TrendingUp },
-                        { label: 'FIRE Progress', value: '48%', change: '+2.1%', positive: true, icon: Target },
+                        {
+                            label: 'Total Invested',
+                            value: totalInvested > 0
+                                ? `₹${totalInvested.toLocaleString('en-IN')}`
+                                : '₹0',
+                            change: strategies.length > 0 ? `${strategies.length} strategies` : 'No strategies',
+                            positive: true,
+                            icon: Wallet
+                        },
+                        {
+                            label: 'Projected Value',
+                            value: projectedValue > 0
+                                ? `₹${projectedValue.toLocaleString('en-IN')}`
+                                : '₹0',
+                            change: totalInvested > 0
+                                ? `+${Math.round(((projectedValue - totalInvested) / totalInvested) * 100)}%`
+                                : '0%',
+                            positive: projectedValue >= totalInvested,
+                            icon: TrendingUp
+                        },
+                        {
+                            label: 'FIRE Progress',
+                            value: `${fireProgress}%`,
+                            change: fireProgress > 0 ? 'On track' : 'Set goal',
+                            positive: fireProgress > 0,
+                            icon: Target
+                        },
                         { label: 'Active Strategies', value: strategies.length.toString(), change: 'View all', positive: true, icon: PieChart },
                     ].map((stat, idx) => (
                         <div key={idx} className="card p-6">
                             <div className="flex items-start justify-between mb-4">
                                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${idx === 0 ? 'bg-primary-100 dark:bg-primary-900/30' :
-                                        idx === 1 ? 'bg-success-100 dark:bg-success-900/30' :
-                                            idx === 2 ? 'bg-accent-100 dark:bg-accent-900/30' :
-                                                'bg-warning-100 dark:bg-warning-900/30'
+                                    idx === 1 ? 'bg-success-100 dark:bg-success-900/30' :
+                                        idx === 2 ? 'bg-accent-100 dark:bg-accent-900/30' :
+                                            'bg-warning-100 dark:bg-warning-900/30'
                                     }`}>
                                     <stat.icon className={`w-6 h-6 ${idx === 0 ? 'text-primary-600 dark:text-primary-400' :
-                                            idx === 1 ? 'text-success-600 dark:text-success-400' :
-                                                idx === 2 ? 'text-accent-600 dark:text-accent-400' :
-                                                    'text-warning-600 dark:text-warning-400'
+                                        idx === 1 ? 'text-success-600 dark:text-success-400' :
+                                            idx === 2 ? 'text-accent-600 dark:text-accent-400' :
+                                                'text-warning-600 dark:text-warning-400'
                                         }`} />
                                 </div>
                                 <div className={`flex items-center gap-1 text-sm font-medium ${stat.positive ? 'text-success-600' : 'text-danger-600'
@@ -222,7 +307,7 @@ export default function DashboardPage() {
                         </div>
                     </div>
                 </div>
-            </main>
-        </div>
+            </main >
+        </div >
     );
 }

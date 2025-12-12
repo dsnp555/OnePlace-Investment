@@ -7,6 +7,13 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { supabase } from '../lib/supabase.js';
 import { DEFAULT_ASSET_CATEGORIES } from '@oneplace/calc';
+import {
+    getQuote,
+    searchSymbols,
+    getDailyPrices,
+    getRateLimitStatus,
+    POPULAR_INDIAN_SYMBOLS,
+} from '../services/alphaVantage.js';
 
 // Mock market data for development
 const MOCK_MARKET_DATA = {
@@ -264,5 +271,142 @@ export async function marketRoutes(fastify: FastifyInstance): Promise<void> {
             disclaimer: 'Past performance does not guarantee future results.',
             lastUpdated: new Date().toISOString(),
         };
+    });
+
+    // ========================================
+    // Alpha Vantage Live Data Endpoints
+    // ========================================
+
+    /**
+     * GET /api/markets/live/quote/:symbol
+     * Get live quote from Alpha Vantage
+     */
+    fastify.get('/live/quote/:symbol', {
+        schema: {
+            description: 'Get live stock quote from Alpha Vantage',
+            tags: ['Market', 'Alpha Vantage'],
+            params: {
+                type: 'object',
+                required: ['symbol'],
+                properties: {
+                    symbol: { type: 'string' },
+                },
+            },
+        },
+    }, async (request: FastifyRequest<{ Params: { symbol: string } }>, reply: FastifyReply) => {
+        try {
+            const { symbol } = request.params;
+            const quote = await getQuote(symbol);
+            return {
+                ...quote,
+                source: 'Alpha Vantage',
+                rateLimitStatus: getRateLimitStatus(),
+            };
+        } catch (error: any) {
+            const status = error.error === 'Rate Limit Exceeded' ? 429 : 400;
+            return reply.status(status).send(error);
+        }
+    });
+
+    /**
+     * GET /api/markets/live/search
+     * Search for symbols
+     */
+    fastify.get('/live/search', {
+        schema: {
+            description: 'Search for stock symbols',
+            tags: ['Market', 'Alpha Vantage'],
+            querystring: {
+                type: 'object',
+                required: ['q'],
+                properties: {
+                    q: { type: 'string', minLength: 1 },
+                },
+            },
+        },
+    }, async (request: FastifyRequest<{ Querystring: { q: string } }>, reply: FastifyReply) => {
+        try {
+            const { q } = request.query;
+            const results = await searchSymbols(q);
+            return {
+                query: q,
+                results,
+                count: results.length,
+                rateLimitStatus: getRateLimitStatus(),
+            };
+        } catch (error: any) {
+            const status = error.error === 'Rate Limit Exceeded' ? 429 : 400;
+            return reply.status(status).send(error);
+        }
+    });
+
+    /**
+     * GET /api/markets/live/history/:symbol
+     * Get historical daily prices
+     */
+    fastify.get('/live/history/:symbol', {
+        schema: {
+            description: 'Get historical daily prices from Alpha Vantage',
+            tags: ['Market', 'Alpha Vantage'],
+            params: {
+                type: 'object',
+                required: ['symbol'],
+                properties: {
+                    symbol: { type: 'string' },
+                },
+            },
+            querystring: {
+                type: 'object',
+                properties: {
+                    full: { type: 'boolean', default: false },
+                },
+            },
+        },
+    }, async (request: FastifyRequest<{
+        Params: { symbol: string };
+        Querystring: { full?: boolean };
+    }>, reply: FastifyReply) => {
+        try {
+            const { symbol } = request.params;
+            const { full = false } = request.query;
+            const history = await getDailyPrices(symbol, full ? 'full' : 'compact');
+            return {
+                ...history,
+                source: 'Alpha Vantage',
+                rateLimitStatus: getRateLimitStatus(),
+            };
+        } catch (error: any) {
+            const status = error.error === 'Rate Limit Exceeded' ? 429 : 400;
+            return reply.status(status).send(error);
+        }
+    });
+
+    /**
+     * GET /api/markets/live/popular
+     * Get list of popular Indian stocks
+     */
+    fastify.get('/live/popular', {
+        schema: {
+            description: 'Get popular Indian stock symbols',
+            tags: ['Market', 'Alpha Vantage'],
+        },
+    }, async () => {
+        return {
+            symbols: POPULAR_INDIAN_SYMBOLS,
+            rateLimitStatus: getRateLimitStatus(),
+        };
+    });
+
+    /**
+     * GET /api/markets/live/rate-limit
+     * Get current rate limit status
+     */
+    fastify.get('/live/rate-limit', {
+        schema: {
+            description: 'Get Alpha Vantage API rate limit status',
+            tags: ['Market', 'Alpha Vantage'],
+        },
+    }, async () => {
+        return getRateLimitStatus();
     });
 }

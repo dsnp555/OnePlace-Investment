@@ -9,18 +9,19 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                // Groww-style green theme
                 primary: {
-                    50: '#f0f9ff',
-                    100: '#e0f2fe',
-                    200: '#bae6fd',
-                    300: '#7dd3fc',
-                    400: '#38bdf8',
-                    500: '#0ea5e9',
-                    600: '#0284c7',
-                    700: '#0369a1',
-                    800: '#075985',
-                    900: '#0c4a6e',
-                    950: '#082f49',
+                    50: '#e6fbf5',
+                    100: '#b3f4e0',
+                    200: '#80edcb',
+                    300: '#4de6b6',
+                    400: '#26e0a6',
+                    500: '#00D09C', // Groww signature green
+                    600: '#00b888',
+                    700: '#009c73',
+                    800: '#007f5e',
+                    900: '#006349',
+                    950: '#003d2d',
                 },
                 accent: {
                     50: '#fdf4ff',
