@@ -7,7 +7,9 @@
     "build": "turbo run build",
     "build:calc": "cd packages/calc && npm install && npm run build",
     "build:web": "cd apps/web && npm install --legacy-peer-deps && npm run build",
+    "build:api": "cd apps/api && npm install && npm run build",
     "start:web": "cd apps/web && npm start",
+    "start:api": "cd apps/api && npm start",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules"
