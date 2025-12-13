@@ -42,9 +42,14 @@ const server = Fastify({
 
 // Register plugins
 async function registerPlugins() {
-    // CORS
+    // CORS - allow Vercel and localhost
     await server.register(cors, {
-        origin: process.env.CORS_ORIGIN || ['http://localhost:3000', 'http://localhost:8081'],
+        origin: process.env.CORS_ORIGIN || [
+            'http://localhost:3000',
+            'http://localhost:8081',
+            'https://one-place-investment-web.vercel.app',
+            /\.vercel\.app$/  // Allow all Vercel preview deploys
+        ],
         credentials: true,
     });
 
