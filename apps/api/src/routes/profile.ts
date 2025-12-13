@@ -6,7 +6,7 @@
 
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { authMiddleware, getAuthClient } from '../middleware/auth.js';
-import { assessRisk, calculateEmergencyFund, calculateFIRENumber, estimateYearsToFIRE } from '@oneplace/calc';
+import { assessRisk, calculateEmergencyFund, calculateFIRENumber, estimateYearsToFIRE } from '../../calc/dist/index.js';
 
 interface ProfileUpdateBody {
     full_name?: string;
