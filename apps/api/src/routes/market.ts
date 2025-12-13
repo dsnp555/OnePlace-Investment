@@ -6,7 +6,7 @@
 
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { supabase } from '../lib/supabase.js';
-import { DEFAULT_ASSET_CATEGORIES } from '@oneplace/calc';
+import { DEFAULT_ASSET_CATEGORIES } from '../../calc/dist/index.js';
 import {
     getQuote,
     searchSymbols,
