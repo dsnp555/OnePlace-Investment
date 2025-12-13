@@ -11,7 +11,7 @@ import {
     normalizeAllocations,
     Allocation as CalcAllocation,
     ProjectionParams,
-} from '../../calc/dist/index.js';
+} from '@oneplace/calc';
 
 interface CreateStrategyBody {
     name: string;

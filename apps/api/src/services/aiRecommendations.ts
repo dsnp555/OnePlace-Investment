@@ -9,7 +9,7 @@
  * - FIRE progress
  */
 
-import { RiskProfile, Allocation } from '../../calc/dist/index.js';
+import { RiskProfile, Allocation } from '@oneplace/calc';
 
 interface Recommendation {
     id: string;

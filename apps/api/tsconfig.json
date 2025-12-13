@@ -14,14 +14,22 @@
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
         "noImplicitAny": false,
-        "noEmit": false
+        "noEmit": false,
+        "baseUrl": ".",
+        "paths": {
+            "@oneplace/calc": [
+                "./calc/dist/index.js"
+            ],
+            "@oneplace/calc/*": [
+                "./calc/dist/*"
+            ]
+        }
     },
     "include": [
         "src/**/*"
     ],
     "exclude": [
         "node_modules",
-        "dist",
-        "calc"
+        "dist"
     ]
 }

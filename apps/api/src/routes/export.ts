@@ -6,7 +6,7 @@
 
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { authMiddleware, getAuthClient } from '../middleware/auth.js';
-import { projectPortfolio, ProjectionParams } from '../../calc/dist/index.js';
+import { projectPortfolio, ProjectionParams } from '@oneplace/calc';
 
 export async function exportRoutes(fastify: FastifyInstance): Promise<void> {
     /**
