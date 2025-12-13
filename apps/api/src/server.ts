@@ -25,8 +25,10 @@ import { newsRoutes } from './routes/news.js';
 // Load environment variables
 dotenv.config({ path: '../../.env' });
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const server = Fastify({
-    logger: {
+    logger: isProduction ? true : {
         level: process.env.LOG_LEVEL || 'info',
         transport: {
             target: 'pino-pretty',
@@ -95,6 +97,12 @@ async function registerPlugins() {
 // Register routes
 async function registerRoutes() {
     // Health check
+    // Root route for health check (Railway checks /)
+    server.get('/', async () => {
+        return { status: 'ok', service: 'OnePlace API', timestamp: new Date().toISOString() };
+    });
+
+    // Health endpoint
     server.get('/health', async () => {
         return { status: 'ok', timestamp: new Date().toISOString() };
     });
@@ -159,8 +167,9 @@ async function start() {
         await registerPlugins();
         await registerRoutes();
 
-        const port = parseInt(process.env.API_PORT || '3001', 10);
-        const host = process.env.API_HOST || '0.0.0.0';
+        // Railway provides PORT, fallback to API_PORT or 3001
+        const port = parseInt(process.env.PORT || process.env.API_PORT || '3001', 10);
+        const host = '0.0.0.0'; // Always bind to 0.0.0.0 for containers
 
         await server.listen({ port, host });
 
