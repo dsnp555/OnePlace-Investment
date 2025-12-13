@@ -1,16 +1,35 @@
 {
-    "extends": "../../tsconfig.json",
     "compilerOptions": {
+        "target": "ES2020",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "lib": [
+            "ES2020"
+        ],
         "outDir": "./dist",
         "rootDir": "./src",
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext"
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "declaration": true,
+        "baseUrl": ".",
+        "paths": {
+            "@oneplace/calc": [
+                "./calc/dist/index.js"
+            ],
+            "@oneplace/calc/*": [
+                "./calc/dist/*"
+            ]
+        }
     },
     "include": [
         "src/**/*"
     ],
     "exclude": [
         "node_modules",
-        "dist"
+        "dist",
+        "calc"
     ]
 }
