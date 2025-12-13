@@ -42,8 +42,8 @@ importers:
         specifier: ^2.0.1
         version: 2.1.0
       '@oneplace/calc':
-        specifier: file:../../packages/calc
-        version: file:packages/calc
+        specifier: file:./calc
+        version: file:apps/api/calc
       '@supabase/supabase-js':
         specifier: ^2.39.0
         version: 2.87.1
@@ -5168,6 +5168,11 @@ packages:
       '@types/react': 18.3.27
       react: 18.3.1
       use-sync-external-store: 1.6.0(react@18.3.1)
+    dev: false
+
+  file:apps/api/calc:
+    resolution: {directory: apps/api/calc, type: directory}
+    name: '@oneplace/calc'
     dev: false
 
   file:packages/calc:
