@@ -120,7 +120,7 @@ export default function LoginPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="you@example.com"
                                     className="input"
-                                    style={{ paddingLeft: '3rem' }}
+                                    style={{ paddingLeft: '3.5rem' }}
                                     required
                                 />
                             </div>
@@ -143,7 +143,7 @@ export default function LoginPage() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
                                     className="input"
-                                    style={{ paddingLeft: '3rem', paddingRight: '3rem' }}
+                                    style={{ paddingLeft: '3.5rem', paddingRight: '3.5rem' }}
                                     required
                                 />
                                 <button
