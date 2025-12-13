@@ -2,11 +2,11 @@
     "name": "@oneplace/api",
     "version": "1.0.0",
     "private": true,
-    "main": "dist/server.js",
+    "main": "src/server.ts",
     "scripts": {
         "dev": "tsx watch src/server.ts",
-        "build": "tsc --skipLibCheck",
-        "start": "node dist/server.js",
+        "build": "echo 'Using tsx runtime - no build needed'",
+        "start": "tsx src/server.ts",
         "test": "jest",
         "lint": "eslint src/",
         "clean": "rm -rf dist"
@@ -23,11 +23,11 @@
         "fastify": "^4.25.0",
         "jspdf": "^2.5.1",
         "jspdf-autotable": "^3.8.1",
+        "tsx": "^4.6.2",
         "zod": "^3.22.4"
     },
     "devDependencies": {
         "@types/node": "^20.10.0",
-        "tsx": "^4.6.2",
         "typescript": "^5.3.3"
     }
 }
